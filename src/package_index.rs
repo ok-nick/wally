@@ -187,6 +187,10 @@ impl PackageIndex {
         path.push(scope);
         path.push("owners.json");
 
+        if !path.exists() {
+            return Ok(Vec::new());
+        }
+
         match File::open(path) {
             Ok(file) => serde_json::from_reader(file)
                 .with_context(|| format!("could not parse owner file for scope {}", scope)),
