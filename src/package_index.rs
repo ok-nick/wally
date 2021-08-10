@@ -187,10 +187,6 @@ impl PackageIndex {
         path.push(scope);
         path.push("owners.json");
 
-        if !path.exists() {
-            return Ok(Vec::new());
-        }
-
         match File::open(path) {
             Ok(file) => serde_json::from_reader(file)
                 .with_context(|| format!("could not parse owner file for scope {}", scope)),
@@ -222,8 +218,8 @@ impl PackageIndex {
         path.push("owners.json");
 
         {
-            let mut file = OpenOptions::new().write(true).create(true).open(&path)?;
             let mut owners = self.get_scope_owners(&scope)?;
+            let mut file = OpenOptions::new().write(true).create(true).open(&path)?;
 
             owners.push(*owner_id);
             file.write_all(serde_json::to_string(&owners)?.as_bytes())?;
